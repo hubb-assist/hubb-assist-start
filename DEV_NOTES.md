@@ -1,5 +1,29 @@
 # Notas de Desenvolvimento - HUBB Assist
 
+## 🎯 Estratégia de Desenvolvimento - IMPORTANTE!
+
+### Fase 1 - Frontend First com Mock Data
+- O desenvolvimento inicial será focado APENAS no frontend
+- Todos os dados serão armazenados no localStorage
+- Objetivo: demonstração rápida para stakeholders
+- Benefícios:
+  - Validação rápida da interface e UX
+  - Feedback antecipado dos stakeholders
+  - Desenvolvimento ágil sem dependências de backend
+  - Facilita mudanças baseadas em feedback
+
+### Estrutura dos Mocks
+- Dados serão estruturados seguindo o formato final da API
+- Implementação de serviços com interface similar à futura API
+- Uso de TypeScript para garantir tipagem correta
+- Fácil substituição futura por chamadas reais à API
+
+### Plano de Transição para Backend
+- Manter interfaces de serviços consistentes
+- Implementar interceptors para chamadas HTTP
+- Migração gradual de localStorage para API real
+- Manter compatibilidade com dados existentes
+
 ## 📋 Histórico de Decisões Técnicas
 
 ### Stack Tecnológica
