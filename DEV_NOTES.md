@@ -69,6 +69,11 @@ export default {
       colors: {
         primary: "#1B0B25",
         secondary: "#E72A4A"
+      },
+      fontFamily: {
+        sans: ['Poppins', 'Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
       }
     },
   },
@@ -179,5 +184,202 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 - Cache estratégico
 - Otimização de queries
 - Monitoramento contínuo
+
+## 🔧 Correções de Configuração (02/04/2024)
+
+### Problemas Resolvidos
+1. Erro de resolução de imports com o alias `@/`
+2. Erro na classe `font-inter` do Tailwind
+3. Configuração incompleta do TypeScript para Node.js
+
+### Detalhes das Alterações
+
+#### 1. Configuração do Vite
+Ajustado o arquivo `vite.config.ts` para configurar corretamente o alias `@/`:
+```typescript
+// Configuração de alias adicionada
+resolve: {
+  alias: {
+    '@': path.resolve(__dirname, './src')
+  }
+}
+```
+
+#### 2. Configuração do TypeScript
+Criado arquivo `tsconfig.node.json` para suporte adequado ao Node.js.
+
+#### 3. Dependências Adicionadas
+```bash
+npm install -D @types/node
+npm install -D tailwindcss-animate
+```
+
+#### 4. Configuração do Tailwind
+Adicionadas classes personalizadas de fontes no `tailwind.config.js`:
+```javascript
+fontFamily: {
+  sans: ['Poppins', 'Inter', 'sans-serif'],
+  poppins: ['Poppins', 'sans-serif'],
+  inter: ['Inter', 'sans-serif'],
+}
+```
+
+Servidor rodando com sucesso em http://localhost:5173/
+
+## 📊 Implementação de Gráficos Avançados (03/04/2024)
+
+### Recursos Adicionados
+1. Componente de Area Chart com gradiente para visualização de dados
+2. Componentes base para criação de gráficos customizados
+3. Integração com biblioteca Recharts
+
+### Detalhes da Implementação
+
+#### 1. Componentes UI para Gráficos
+Adicionado componente `chart.tsx` com ferramentas para criação de gráficos:
+- `ChartContainer` - Container para gráficos com suporte a variáveis CSS
+- `ChartTooltipContent` - Tooltip customizado para exibição de dados
+- `ChartTooltip` - Wrapper do componente Tooltip do Recharts
+
+#### 2. Gráfico de Área com Gradiente
+Implementado componente `AreaChartGradient.tsx` com:
+- Gradientes lineares para preenchimento de áreas
+- Estilos consistentes com a identidade visual do HUBB Assist
+- Dados mockados para demonstração de consultas e procedimentos
+
+#### 3. Dependências Adicionadas
+```bash
+npm install recharts lucide-react
+```
+
+Este gráfico oferece uma visualização mais atrativa da evolução semestral de consultas e procedimentos, alinhado com a estratégia de Frontend First para demonstração para stakeholders.
+
+## 🎨 Melhorias Visuais nos Gráficos (04/04/2024)
+
+### Aprimoramentos Realizados
+1. Implementação de degradês mais pronunciados para melhor estética visual
+2. Conversão do gráfico de pizza para estilo donut com efeitos visuais aprimorados
+3. Adição de descrições mais ricas para cada visualização de dados
+4. Refinamento das bordas e contornos dos gráficos de barras
+
+### Detalhes das Alterações
+
+#### 1. Degradês Aprimorados
+- Aumentada a opacidade dos gradientes para `0.9` para maior contraste
+- Alterada a curva dos gráficos de `natural` para `monotone` para suavização visual
+- Ajustados os offsets dos gradientes para início em `0%` e término em `100%`
+
+#### 2. Gráfico de Barras
+- Adicionados cantos arredondados com `radius={[4, 4, 0, 0]}`
+- Implementado degradê vertical nas barras para efeito 3D sutil
+- Adicionado grid horizontal tracejado para facilitar leitura de valores
+
+#### 3. Gráfico de Pizza (Donut)
+- Convertido para estilo donut com `innerRadius={30}`
+- Aumentado o diâmetro externo para `90px`
+- Adicionado espaçamento entre segmentos com `paddingAngle={2}`
+- Aplicadas bordas nos segmentos para melhor delimitação visual
+
+Estas melhorias visuais aumentam significativamente o impacto das apresentações para stakeholders, além de facilitar a interpretação dos dados através de elementos visuais mais claros e atrativos.
+
+## 🌈 Aprimoramento do Gráfico de Pizza (04/04/2024)
+
+### Melhorias Implementadas
+1. Adicionados gradientes radiais para cada segmento do gráfico de pizza
+2. Refinado o estilo visual do tooltip com bordas suaves e sombras
+3. Melhorada a animação do gráfico com duração de 1000ms
+
+### Detalhes Técnicos
+
+#### 1. Gradientes Radiais no Gráfico de Pizza
+```jsx
+<radialGradient id="pieGradient0" cx="50%" cy="50%" r="100%" fx="50%" fy="50%">
+  <stop offset="0%" stopColor={`${COLORS[0]}FF`} stopOpacity={1} />
+  <stop offset="70%" stopColor={COLORS[0]} stopOpacity={0.9} />
+  <stop offset="100%" stopColor={COLORS[0]} stopOpacity={0.8} />
+</radialGradient>
+```
+
+#### 2. Tooltip Personalizado
+```jsx
+<Tooltip 
+  formatter={(value) => [`${value} procedimentos`, 'Quantidade']}
+  contentStyle={{ 
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+  }}
+/>
+```
+
+#### 3. Parâmetros Visuais Refinidos
+- Aumentado o espaçamento entre segmentos para `paddingAngle={3}`
+- Ampliado o raio interno para `innerRadius={35}`
+- Melhorada a espessura da borda para `strokeWidth={2}`
+
+Esta atualização aprimora significativamente o impacto visual do gráfico de pizza, com efeitos de profundidade e brilho que destacam cada segmento de forma mais atrativa para apresentações aos stakeholders.
+
+## 🔄 Atualização de Gradientes no Gráfico de Pizza (04/04/2024)
+
+### Alterações Realizadas
+1. Substituído o uso de `radialGradient` por `linearGradient` para melhor compatibilidade
+2. Aplicadas cores mais brilhantes no início do gradiente para aumentar contraste
+3. Definidos gradientes diagonais (x1="0" y1="0" x2="1" y2="1")
+
+### Detalhes Técnicos
+
+#### Novo Gradiente Linear
+```jsx
+<linearGradient id="pieGradient0" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0%" stopColor="#2d1640" stopOpacity={1} />
+  <stop offset="100%" stopColor="#1B0B25" stopOpacity={0.8} />
+</linearGradient>
+```
+
+Esta mudança foi necessária para garantir que o efeito de degradê seja corretamente renderizado pelo Recharts em diferentes navegadores, oferecendo uma experiência visual mais consistente e impactante.
+
+## 📈 Implementação de Gráfico Interativo com Dados Detalhados (04/04/2024)
+
+### Melhorias Implementadas
+1. Criado gráfico de área interativo com dados diários mais detalhados
+2. Adicionado seletor de período (1 mês, 3 meses, 6 meses, 1 ano)
+3. Implementado degradê suave nas áreas do gráfico
+4. Tooltip personalizado com formatação e estilos aprimorados
+
+### Componentes Criados
+1. `src/components/ui/select.tsx`: Componente de seleção com suporte a:
+   - Seleção dropdown
+   - Estilo consistente com o design system
+   - Navegação por teclado
+   - Animações de abertura/fechamento
+
+2. Atualização de `AreaChartGradient.tsx`:
+   - Função para gerar dados diários com variações naturais
+   - Layout responsivo com ResponsiveContainer
+   - Gradientes lineares para desktop e mobile
+   - Configuração avançada do eixo X para datas
+
+### Detalhes Técnicos
+
+#### 1. Gradientes Aprimorados para o Gráfico de Área
+```jsx
+<linearGradient id="colorDesktop" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="5%" stopColor="#E72A4A" stopOpacity={0.8} />
+  <stop offset="95%" stopColor="#E72A4A" stopOpacity={0} />
+</linearGradient>
+```
+
+#### 2. Geração de Dados Realistas
+```jsx
+const generateDailyData = () => {
+  // Criar variação natural nos dados usando funções trigonométricas
+  const baseMobile = 200 + Math.sin(i * 0.3) * 100;
+  // Adicionar variação aleatória para tornar os dados mais realistas
+  const mobile = Math.max(50, Math.round(baseMobile + (Math.random() * 100 - 50)));
+};
+```
+
+Esta implementação oferece uma visualização muito mais detalhada e interativa da evolução dos atendimentos ao longo do tempo, similar a dashboards analíticos profissionais, proporcionando uma experiência ainda mais impactante para apresentações aos stakeholders.
 
 Este documento será atualizado conforme o desenvolvimento do projeto avança e novas decisões técnicas são tomadas. 
