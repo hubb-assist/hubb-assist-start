@@ -148,6 +148,30 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 - Componentes reutilizáveis seguindo o design system HUBB Assist
 - Validação de dados críticos com feedback visual imediato
 
+### 🆕 Módulo de Imagens
+
+#### Implementação
+- **Data:** 02/04/2025
+- **Descrição:** Implementação da galeria de imagens e documentos para pacientes
+- **Componentes:** 
+  - `PatientImagesGallery.tsx`: Interface principal com múltiplas abas para diferentes tipos de mídia
+  - Componentes auxiliares: ImageCard, BeforeAfterCompare, DocumentItem
+  
+#### Recursos
+- **Galeria de Fotografias:** Separadas entre extraorais e intraorais
+- **Radiografias:** Organização entre panorâmicas e periapicais
+- **Escaneamentos Intraorais:** Visualização de escaneamentos digitais
+- **Modelos 3D:** Interface para modelos digitais com link para visualizador 3D
+- **Timeline de Evolução:** Comparativos antes/depois e navegação cronológica
+- **Documentos:** Gestão de documentos digitalizados, prescrições e atestados
+
+#### UX/UI
+- Organização em abas para fácil navegação entre diferentes tipos de mídia
+- Preview de imagens com informações contextuais (data, descrição)
+- Recursos de ampliação e download
+- Alertas para documentos com prazos próximos do vencimento
+- Interface responsiva adaptada para diferentes tamanhos de tela
+
 ## 📅 Roadmap Técnico
 
 ### Fase 1 - Fundação

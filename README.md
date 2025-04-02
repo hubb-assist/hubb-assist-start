@@ -15,6 +15,7 @@ HUBB Assist é um sistema de gestão odontológica completo, moderno e modular, 
 - Módulos de IA para análise e planejamento
 - Sistema completo de configurações e permissões
 - Anamnese detalhada com questionário de saúde, histórico familiar e sinalizações para condições críticas
+- Galeria multimídia com fotografias, radiografias, escaneamentos, modelos 3D e timeline de evolução do tratamento
 
 ## 🔧 Tecnologias Utilizadas
 
