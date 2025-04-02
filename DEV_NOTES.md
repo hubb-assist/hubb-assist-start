@@ -172,6 +172,91 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 - Alertas para documentos com prazos próximos do vencimento
 - Interface responsiva adaptada para diferentes tamanhos de tela
 
+### 🆕 Módulo HUBB HOF (Harmonização Orofacial)
+
+#### Implementação
+- **Data:** 05/04/2025
+- **Descrição:** Sistema de planejamento de harmonização orofacial com interface interativa para seleção de procedimentos em regiões faciais específicas
+- **Componentes:**
+  - `Hof.tsx`: Página principal de entrada do módulo
+  - `ImageSelection.tsx`: Interface para seleção da foto do paciente
+  - `Planning.tsx`: Planejamento com máscara facial interativa e procedimentos
+  - Componentes auxiliares: RegionSelectionModal, PatientView
+
+#### Recursos
+- **Seleção de Paciente:** Interface para carregamento de dados do paciente
+- **Seleção de Imagem:** Visualização e escolha de fotografias frontais, laterais e em ângulo
+- **Máscara Facial Interativa:** Sobreposição SVG com pontos de referência adaptada ao tipo de imagem
+- **Regiões Anatômicas Clicáveis:** Glabela, zigomático, lábios, mandíbula, mento, sulco nasogeniano, papada
+- **Planejamento de Procedimentos:** Interface para adicionar procedimentos específicos para cada região
+- **Cálculo Automático:** Estimativa de custos, materiais e tempo de procedimento
+- **Visualização de Resultados:** Simulação visual básica com comparativo antes/depois
+- **Guia Orçamentária:** Geração de documento com procedimentos selecionados e valores
+
+#### Tecnologias Específicas
+- SVG interativo para mapeamento facial
+- Renderização condicional baseada em tipo de imagem (frontal, lateral, diagonal)
+- Armazenamento local de procedimentos e materiais selecionados
+- Cálculo dinâmico de valores e tempo total de procedimento
+
+#### UX/UI
+- Fluxo em etapas guiadas para facilitar o planejamento
+- Interface intuitiva com regiões clicáveis destacadas visualmente
+- Feedback visual durante seleção de procedimentos
+- Painel lateral com resumo dos procedimentos selecionados
+- Visualização comparativa para avaliação de resultados esperados
+- Design totalmente responsivo mantendo a precisão dos pontos de referência
+
+#### Considerações Técnicas
+- Utiliza localStorage para armazenar dados de paciente, imagens e seleções
+- Sistema adaptativo que ajusta pontos de referência com base no tipo de imagem
+- Estrutura modular permitindo futuras expansões com IA para simulação de resultados
+- Integração preparada para futura API de orçamentos e prontuários
+
+### 🆕 Módulo HUBB HUNTER (Marketing e Captação)
+
+#### Implementação
+- **Data:** 06/04/2025
+- **Descrição:** Sistema de gestão de marketing e captação de leads com ferramentas de automação e análise assistida por IA
+- **Componentes:**
+  - `Hunter.tsx`: Página principal com sistema de abas para diferentes funcionalidades
+  - `HunterDashboard.tsx`: Dashboard com métricas e KPIs de captação
+  - `LeadCapture.tsx`: Interface para gerenciamento de leads e formulários
+  - `LandingPages.tsx`: Gerenciamento de landing pages com templates
+  - `ConversionFunnel.tsx`: Visualização e gestão do funil de conversão
+  - Componentes auxiliares: LeadCard, IntelligencePanel, TemplatePreview
+
+#### Recursos
+- **Dashboard Analítico:** Visualização de métricas de captação, conversão e ROI por canal
+- **Gestão de Leads:** Sistema completo para captura, acompanhamento e qualificação de leads
+- **Landing Pages:** Templates personalizáveis com análise de desempenho
+- **Funil de Conversão:** Interface kanban para gestão visual do processo de conversão
+- **Assistente IA:** Sugestões automatizadas para otimização da taxa de conversão
+- **Automação:** Fluxos para nutrição de leads e follow-up automático
+- **Segmentação:** Categorização de leads por fonte, interesse e potencial de conversão
+
+#### Tecnologias Específicas
+- Sistema de abas para navegação entre funcionalidades
+- Visualização kanban para gerenciamento de leads por status
+- Componentes interativos para análise de métricas
+- Modais de detalhamento para informações complementares
+- Integração com sistema de notificações
+
+#### UX/UI
+- Interface unificada com navegação por abas para facilitar acesso às diferentes funcionalidades
+- Visualizações personalizadas por função (dashboard, kanban, lista)
+- Cards interativos com ações contextuais
+- Painéis de filtro e busca para facilitar a localização de informações
+- Design responsivo otimizado para diferentes dispositivos
+- Feedback visual para ações realizadas e estados de processamento
+
+#### Considerações Técnicas
+- Arquitetura baseada em componentes para máxima reutilização
+- Estado gerenciado localmente com useState para simplicidade
+- Dados mockados estruturados para simular API futura
+- Sistema preparado para integração com APIs de marketing (Google, Facebook, Instagram)
+- Uso de localStorage para persistência temporária de configurações e preferências
+
 ## 📅 Roadmap Técnico
 
 ### Fase 1 - Fundação
