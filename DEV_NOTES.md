@@ -123,6 +123,31 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 - Otimização de queries do banco de dados
 - Caching estratégico
 
+### 🆕 Módulo de Anamnese
+
+#### Implementação
+- **Data:** 02/04/2025
+- **Descrição:** Implementação do formulário de anamnese completo para cadastro de pacientes
+- **Componentes:** 
+  - `AnamnesisForm.tsx`: Formulário principal com múltiplas abas
+  - Integração com componentes UI: Tabs, Checkbox, Label, Textarea, Input
+  
+#### Recursos
+- **Questionário de Saúde Geral:** Condições médicas, uso de medicamentos, alergias
+- **Histórico Familiar:** Doenças hereditárias e familiares
+- **Hábitos Relevantes:** Tabagismo, consumo de álcool, outros hábitos
+- **Informações Adicionais:** Tratamentos anteriores, queixas e observações
+
+#### Sistema de Sinalizações
+- Implementado sistema visual para condições críticas que requerem atenção
+- Condições sinalizadas: doenças cardíacas, hipertensão, diabetes, alergias, gravidez, anticoagulantes
+- Código de cores (vermelho) para destacar condições críticas na interface
+
+#### Performance e UX
+- Interface com abas para facilitar navegação entre diferentes seções
+- Componentes reutilizáveis seguindo o design system HUBB Assist
+- Validação de dados críticos com feedback visual imediato
+
 ## 📅 Roadmap Técnico
 
 ### Fase 1 - Fundação
@@ -381,5 +406,80 @@ const generateDailyData = () => {
 ```
 
 Esta implementação oferece uma visualização muito mais detalhada e interativa da evolução dos atendimentos ao longo do tempo, similar a dashboards analíticos profissionais, proporcionando uma experiência ainda mais impactante para apresentações aos stakeholders.
+
+## 📋 Documentação de Componentes
+
+### Interface Modular de Cadastro de Pacientes
+
+**Data de implementação:** Atual
+**Desenvolvido por:** Equipe HUBB Assist
+**Última atualização:** Integração com o layout existente
+
+#### Arquitetura
+
+A interface de cadastro de pacientes foi implementada seguindo um design modular, integrado à estrutura existente do sistema com o menu lateral.
+
+##### Fluxo de Navegação:
+
+1. Menu lateral (Pacientes) → Lista de pacientes (CRUD)
+2. Ao selecionar um paciente → Visualização detalhada com menu modular
+
+##### Componentes Criados:
+
+1. **`PatientList.tsx`** - Lista de pacientes com opções CRUD
+   - Localização: `src/pages/PatientList.tsx`
+   - Funcionalidades: Listar, criar, editar, excluir e visualizar detalhes
+
+2. **`sidebar-menu.tsx`** - Menu lateral genérico reutilizável
+   - Localização: `src/components/ui/sidebar-menu.tsx`
+   - Props: `items`, `activeItem`, `onItemClick`
+
+3. **`patient-profile-card.tsx`** - Card com informações do perfil do paciente
+   - Localização: `src/components/ui/patient-profile-card.tsx`
+   - Props: `patient`, `onCall`, `onMessage`
+
+4. **`patient-menu.tsx`** - Menu específico para o cadastro de pacientes
+   - Localização: `src/components/patients/patient-menu.tsx`
+   - Props: `onModuleChange`, `initialModule`
+
+5. **`PatientRegistration.tsx`** - Página de detalhes do paciente
+   - Localização: `src/pages/PatientRegistration.tsx`
+   - Rotas: `/pacientes/:id`, `/pacientes/:id/editar`, `/pacientes/novo`
+
+##### Dados Mockados:
+
+- **`mock-data.ts`** - Dados para demonstração
+  - Localização: `src/lib/mock-data.ts`
+  - Conteúdo: 5 pacientes com informações pessoais e clínicas
+
+#### Módulos Implementados
+
+1. **Dados Pessoais** - Completo
+2. **Dados Clínicos** - Completo
+3. **Anamnese** - Estrutura preparada
+4. **Dados Financeiros** - Estrutura preparada
+5. **Imagens** - Estrutura preparada
+6. **Documentos** - Estrutura preparada
+
+#### Design
+
+Seguindo as diretrizes visuais da marca:
+- Cor Primária: `#1B0B25` (backgrounds, elementos principais)
+- Cor Secundária: `#E72A4A` (botões, destaques)
+- Tipografia: Poppins (títulos) e Inter (textos)
+
+#### Acesso
+
+- URL base: http://localhost:5174/pacientes
+- Detalhes de paciente: http://localhost:5174/pacientes/[id]
+- Novo paciente: http://localhost:5174/pacientes/novo
+- Edição: http://localhost:5174/pacientes/[id]/editar
+
+#### Próximos Passos
+
+1. Implementar os módulos pendentes
+2. Adicionar formulários de edição para os dados
+3. Desenvolver sincronização com backend quando disponível
+4. Adicionar upload de imagens e documentos
 
 Este documento será atualizado conforme o desenvolvimento do projeto avança e novas decisões técnicas são tomadas. 

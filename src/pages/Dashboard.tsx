@@ -20,8 +20,9 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts';
-import DashboardLayout from '../layouts/DashboardLayout';
 import { AreaChartGradient } from '@/components/charts/AreaChartGradient';
+import { MiniAreaChart } from '@/components/charts/MiniAreaChart';
+import { TrendingUp } from 'lucide-react';
 
 // Dados mockados para demonstração
 const mockData = {
@@ -48,6 +49,36 @@ const mockData = {
   ],
 };
 
+// Dados para os mini-gráficos
+const generateMiniChartData = (trend = "up") => {
+  const data = [];
+  const length = 20;
+  
+  for (let i = 0; i < length; i++) {
+    let baseValue;
+    if (trend === "up") {
+      baseValue = 10 + (i * 40 / length);
+    } else if (trend === "down") {
+      baseValue = 50 - (i * 40 / length);
+    } else {
+      baseValue = 30;
+    }
+    
+    // Adicionar alguma variação aleatória
+    const value = Math.max(5, baseValue + (Math.random() * 10 - 5 + Math.sin(i * 0.7) * 5));
+    data.push({ value });
+  }
+  
+  return data;
+};
+
+const miniChartData = {
+  consultasHoje: generateMiniChartData("up"),
+  pacientesNovos: generateMiniChartData("up"),
+  taxaOcupacao: generateMiniChartData("stable"),
+  procedimentosMes: generateMiniChartData("up"),
+};
+
 const COLORS = ['#1B0B25', '#E72A4A', '#4C1D95', '#2563EB'];
 
 /**
@@ -55,43 +86,72 @@ const COLORS = ['#1B0B25', '#E72A4A', '#4C1D95', '#2563EB'];
  */
 const Dashboard: React.FC = () => {
   return (
-    <DashboardLayout>
-      {/* Cards de Métricas */}
+    <>
+      {/* Gráfico de Área Principal */}
+      <div className="mb-6">
+        <AreaChartGradient />
+      </div>
+      
+      {/* Cards de Métricas com Mini-gráficos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Consultas Hoje</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="text-2xl font-bold">{mockData.consultasHoje}</div>
-            <Progress value={75} className="mt-4" />
+            <div className="h-10 mt-2 mb-2">
+              <MiniAreaChart 
+                data={miniChartData.consultasHoje} 
+                color="#E72A4A"
+              />
+            </div>
+            <Progress value={75} className="mt-1" />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Novos Pacientes</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="text-2xl font-bold">{mockData.pacientesNovos}</div>
-            <Progress value={50} className="mt-4" />
+            <div className="h-10 mt-2 mb-2">
+              <MiniAreaChart 
+                data={miniChartData.pacientesNovos} 
+                color="#E72A4A"
+              />
+            </div>
+            <Progress value={50} className="mt-1" />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Ocupação</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="text-2xl font-bold">{mockData.taxaOcupacao}%</div>
-            <Progress value={85} className="mt-4" />
+            <div className="h-10 mt-2 mb-2">
+              <MiniAreaChart 
+                data={miniChartData.taxaOcupacao} 
+                color="#E72A4A"
+              />
+            </div>
+            <Progress value={85} className="mt-1" />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Procedimentos no Mês</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="text-2xl font-bold">{mockData.procedimentosMes}</div>
-            <Progress value={65} className="mt-4" />
+            <div className="h-10 mt-2 mb-2">
+              <MiniAreaChart 
+                data={miniChartData.procedimentosMes} 
+                color="#E72A4A"
+              />
+            </div>
+            <Progress value={65} className="mt-1" />
           </CardContent>
         </Card>
       </div>
@@ -204,12 +264,7 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
-      {/* Gráfico de Área com Gradiente */}
-      <div className="mb-6">
-        <AreaChartGradient />
-      </div>
-    </DashboardLayout>
+    </>
   );
 };
 
