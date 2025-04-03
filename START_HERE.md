@@ -23,6 +23,7 @@ Para iniciar qualquer sessão, siga estes passos:
    cat DEV_NOTES.md     # Histórico técnico e decisões
    cat UX_GUIDE.md      # Guia de design e UI
    cat CONTRIBUTING.md  # Regras de desenvolvimento
+   cat docs/GIT_WORKFLOW.md  # NOVO: Fluxo de trabalho Git
    ```
 
 2. **Verifique os assets**:
@@ -91,6 +92,7 @@ Antes de modificar qualquer arquivo, consulte a documentação completa em:
 3. **Branches**:
    - Trabalhar em branches por feature
    - Manter main sempre estável
+   - Seguir a estrutura de branches documentada em [docs/GIT_WORKFLOW.md](./docs/GIT_WORKFLOW.md)
 
 4. **NOVO: Proteção de Módulos**:
    - Verificar a lista de módulos protegidos antes de iniciar modificações
