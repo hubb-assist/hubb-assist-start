@@ -23,6 +23,7 @@ Para iniciar qualquer sessão, siga estes passos:
    cat DEV_NOTES.md     # Histórico técnico e decisões
    cat UX_GUIDE.md      # Guia de design e UI
    cat CONTRIBUTING.md  # Regras de desenvolvimento
+   cat docs/GIT_WORKFLOW.md  # Fluxo de trabalho Git
    ```
 
 2. **Verifique os assets**:
@@ -74,6 +75,15 @@ Para iniciar qualquer sessão, siga estes passos:
 3. **Branches**:
    - Trabalhar em branches por feature
    - Manter main sempre estável
+   - Seguir a estrutura de branches documentada em [docs/GIT_WORKFLOW.md](./docs/GIT_WORKFLOW.md)
+   - Branches principais:
+     - `main` - Branch principal, sempre estável
+     - `module/patients` - Para alterações no módulo de Pacientes
+     - `module/hof` - Para alterações no módulo HOF
+     - `module/hunter` - Para alterações no módulo HUNTER
+     - `feature/module-anamnese` - Para o desenvolvimento do módulo de Anamnese
+     - `feature/module-financeiro` - Para o módulo Financeiro
+     - `feature/module-agenda` - Para o módulo de Agenda
 
 ## 🔄 Comandos Úteis
 
