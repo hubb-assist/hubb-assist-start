@@ -8,6 +8,7 @@ import { mockPatients, mockClinicalData, ClinicalData } from '../lib/mock-data';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import AnamnesisForm from '../components/patients/anamnesis-form';
 import PatientImagesGallery from '../components/patients/patient-images-gallery';
+import FinancialForm from '../components/patients/financial-form';
 
 const PatientRegistration: FC = () => {
   const { id } = useParams<{ id?: string }>();
@@ -178,6 +179,9 @@ const PatientRegistration: FC = () => {
       
       case 'anamnesis':
         return <AnamnesisForm patientId={patient.id} isNewPatient={isNewPatient} />;
+        
+      case 'financial':
+        return <FinancialForm patientId={patient.id} isNewPatient={isNewPatient} />;
         
       case 'images':
         return <PatientImagesGallery patientId={patient.id} isNewPatient={isNewPatient} />;

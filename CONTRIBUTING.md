@@ -7,6 +7,12 @@
 - 🔒 Credenciais e chaves de API devem ser mantidas em variáveis de ambiente
 - 🚫 Nenhuma dependência deve ser instalada sem aprovação prévia
 
+### Módulos Protegidos
+- 🛡️ **NOVO**: Verifique a lista de [Módulos Protegidos](./docs/PROTECTED_MODULES.md) antes de iniciar modificações
+- 🔄 Alterações em módulos protegidos requerem aprovação específica e revisão detalhada
+- 📦 Crie backups antes de alterar qualquer módulo protegido
+- 🔍 Use as ferramentas de verificação disponíveis em `src/lib/module-protection.ts`
+
 ### Controle de Versão
 - 📝 Use commits semânticos e descritivos
 - 🌿 Nomeie branches seguindo o padrão: `modulo/tarefa`
@@ -63,6 +69,7 @@
 - [ ] Documentação foi atualizada
 - [ ] Funcionalidade foi testada localmente
 - [ ] Não há conflitos com o main
+- [ ] **NOVO**: Se afeta módulos protegidos, foi seguido o protocolo especial
 
 ## 🐛 Reportando Bugs
 
@@ -77,5 +84,17 @@
 - Explique sua solução proposta
 - Discuta alternativas consideradas
 - Forneça exemplos de uso
+
+## 🛡️ Processo para Modificação de Módulos Protegidos
+
+Ao modificar módulos protegidos, siga estes passos adicionais:
+
+1. Verifique a documentação em `docs/PROTECTED_MODULES.md`
+2. Crie um branch específico para a alteração
+3. Faça um backup do código original
+4. Documente detalhadamente suas alterações
+5. Implemente testes específicos para as funcionalidades alteradas
+6. Solicite revisão de pelo menos dois desenvolvedores
+7. Inclua na descrição do PR o motivo da alteração em módulo protegido
 
 Este guia será atualizado conforme necessário para manter as melhores práticas de desenvolvimento. 

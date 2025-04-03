@@ -49,7 +49,7 @@ export const PatientProfileCard: FC<PatientProfileCardProps> = ({
               className="border-primary text-primary hover:bg-primary hover:text-white"
               onClick={onCall}
             >
-              Ligar
+              LIGAR COM HUBB TALK
             </Button>
           )}
           {onMessage && (
@@ -58,7 +58,7 @@ export const PatientProfileCard: FC<PatientProfileCardProps> = ({
               className="border-primary text-primary hover:bg-primary hover:text-white"
               onClick={onMessage}
             >
-              Mensagem
+              MENSAGEM COM HUBB CHAT
             </Button>
           )}
         </div>

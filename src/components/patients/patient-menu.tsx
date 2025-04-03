@@ -24,13 +24,8 @@ const patientMenuItems: SidebarMenuItem[] = [
   },
   {
     id: 'images',
-    label: 'Imagens',
+    label: 'Imagens e Docs',
     icon: '🖼️'
-  },
-  {
-    id: 'documents',
-    label: 'Documentos',
-    icon: '📄'
   }
 ];
 

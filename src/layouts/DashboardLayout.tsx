@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { 
@@ -10,7 +10,11 @@ import {
   CogIcon,
   BellIcon,
   ClockIcon,
-  CalendarDaysIcon
+  CalendarDaysIcon,
+  CubeIcon,
+  FaceSmileIcon,
+  MagnifyingGlassIcon,
+  UsersIcon
 } from '@heroicons/react/24/outline';
 
 interface DashboardLayoutProps {
@@ -23,6 +27,7 @@ interface DashboardLayoutProps {
  */
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   
@@ -52,6 +57,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   const menuItems = [
     { icon: ChartBarIcon, label: 'Dashboard', href: '/dashboard' },
     { icon: UserGroupIcon, label: 'Pacientes', href: '/pacientes' },
+    { icon: CubeIcon, label: 'Custos', href: '/custos' },
+    { icon: FaceSmileIcon, label: 'HUBB HOF', href: '/hof' },
+    { icon: MagnifyingGlassIcon, label: 'HUBB HUNTER', href: '/hunter' },
     { icon: CalendarIcon, label: 'Agenda', href: '/agenda' },
     { icon: DocumentTextIcon, label: 'Prontuários', href: '/prontuarios' },
     { icon: CogIcon, label: 'Configurações', href: '/configuracoes' }

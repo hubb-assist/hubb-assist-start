@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect, useRef, ChangeEvent } from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
@@ -8,7 +8,8 @@ import {
   MagnifyingGlassIcon,
   ArrowDownTrayIcon,
   ChevronRightIcon,
-  ChevronLeftIcon
+  ChevronLeftIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 
 interface PatientImagesGalleryProps {
@@ -16,40 +17,103 @@ interface PatientImagesGalleryProps {
   isNewPatient?: boolean;
 }
 
-// Dados fictícios para as imagens
-const mockImages = {
+interface ImageData {
+  id: string;
+  src: string;
+  type: string;
+  date: string;
+  title: string;
+  description: string;
+}
+
+interface RadioData {
+  id: string;
+  src: string;
+  type: string;
+  date: string;
+  title: string;
+  description: string;
+}
+
+interface ScanData {
+  id: string;
+  src: string;
+  type: string;
+  date: string;
+  title: string;
+  description: string;
+}
+
+interface ModelData {
+  id: string;
+  src: string;
+  type: string;
+  date: string;
+  title: string;
+  description: string;
+}
+
+interface TimelineData {
+  id: string;
+  date: string;
+  title: string;
+  imageBefore: string;
+  imageAfter: string | null;
+  description: string;
+}
+
+interface DocumentData {
+  id: string;
+  title: string;
+  type: string;
+  date: string;
+  fileUrl: string;
+  fileType: string;
+}
+
+interface PatientImagesData {
+  photos: ImageData[];
+  radiographs: RadioData[];
+  scans: ScanData[];
+  models: ModelData[];
+  timeline: TimelineData[];
+  documents: DocumentData[];
+}
+
+// Dados fictícios para as imagens, como valor padrão inicial
+const mockImages: PatientImagesData = {
   photos: [
     { 
       id: 'photo1', 
       src: 'https://placehold.co/300x200/E72A4A/FFFFFF?text=Foto+Frontal', 
-      type: 'extraoral', 
+      type: 'frontal', 
       date: '10/03/2025', 
       title: 'Foto Frontal',
-      description: 'Sorriso frontal - avaliação inicial'
+      description: 'Visão frontal para análise facial'
     },
     { 
       id: 'photo2', 
       src: 'https://placehold.co/300x200/E72A4A/FFFFFF?text=Foto+Lateral', 
-      type: 'extraoral', 
+      type: 'lateral', 
       date: '10/03/2025', 
       title: 'Foto Lateral',
-      description: 'Perfil lateral - avaliação inicial'
+      description: 'Perfil lateral para análise facial'
     },
     { 
       id: 'photo3', 
-      src: 'https://placehold.co/300x200/E72A4A/FFFFFF?text=Intraoral+Superior', 
-      type: 'intraoral', 
+      src: 'https://placehold.co/300x200/E72A4A/FFFFFF?text=Foto+Diagonal', 
+      type: 'diagonal', 
       date: '10/03/2025', 
-      title: 'Arcada Superior',
-      description: 'Visão oclusal superior'
+      title: 'Foto Diagonal',
+      description: 'Visão diagonal para análise facial'
     },
     { 
       id: 'photo4', 
-      src: 'https://placehold.co/300x200/E72A4A/FFFFFF?text=Intraoral+Inferior', 
-      type: 'intraoral', 
+      src: 'https://placehold.co/300x200/E72A4A/FFFFFF?text=Foto+Frontal+Sorrindo', 
+      type: 'frontal', 
       date: '10/03/2025', 
-      title: 'Arcada Inferior',
-      description: 'Visão oclusal inferior'
+      title: 'Foto Frontal Sorrindo',
+      description: 'Visão frontal com sorriso'
     }
   ],
   radiographs: [
@@ -160,13 +224,41 @@ const mockImages = {
   ]
 };
 
+// Função para salvar dados de imagens no localStorage
+const saveImagesToLocalStorage = (patientId: string, data: PatientImagesData) => {
+  try {
+    const key = `patient_${patientId}_images`;
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error('Erro ao salvar imagens:', error);
+  }
+};
+
+// Função para carregar dados de imagens do localStorage
+const loadImagesFromLocalStorage = (patientId: string): PatientImagesData => {
+  try {
+    const key = `patient_${patientId}_images`;
+    const storedData = localStorage.getItem(key);
+    
+    if (storedData) {
+      return JSON.parse(storedData) as PatientImagesData;
+    }
+  } catch (error) {
+    console.error('Erro ao carregar imagens:', error);
+  }
+  
+  // Se não encontrar dados ou ocorrer um erro, retorna os dados mockados
+  return mockImages;
+};
+
 // Componente para mostrar uma imagem com informações
 const ImageCard: FC<{
   src: string;
   title: string;
   date: string;
   description: string;
-}> = ({ src, title, date, description }) => {
+  onDelete?: () => void;
+}> = ({ src, title, date, description, onDelete }) => {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md">
       <div className="relative">
@@ -185,6 +277,11 @@ const ImageCard: FC<{
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <ArrowDownTrayIcon className="h-4 w-4" />
           </Button>
+          {onDelete && (
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-50 hover:text-red-600" onClick={onDelete}>
+              <XMarkIcon className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -256,8 +353,288 @@ const DocumentItem: FC<{
   );
 };
 
-const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewPatient = false }) => {
+// Modal de upload de imagens
+const UploadModal: FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onUpload: (data: { file: File, type: string, title: string, description: string }) => void;
+  category: string;
+}> = ({ isOpen, onClose, onUpload, category }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [type, setType] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Limpa o estado ao fechar o modal
+  useEffect(() => {
+    if (!isOpen) {
+      setTitle('');
+      setDescription('');
+      setType('');
+      setFile(null);
+      setPreview(null);
+    }
+  }, [isOpen]);
+
+  // Opções de tipo de imagem com base na categoria
+  const getTypeOptions = () => {
+    switch (category) {
+      case 'photos':
+        return [
+          { value: 'frontal', label: 'Foto Frontal' },
+          { value: 'lateral', label: 'Foto Lateral' },
+          { value: 'diagonal', label: 'Foto Diagonal' }
+        ];
+      case 'radiographs':
+        return [
+          { value: 'panoramic', label: 'Panorâmica' },
+          { value: 'periapical', label: 'Periapical' }
+        ];
+      case 'scans':
+        return [
+          { value: 'full', label: 'Completo' },
+          { value: 'upper', label: 'Arcada Superior' },
+          { value: 'lower', label: 'Arcada Inferior' }
+        ];
+      case 'models':
+        return [
+          { value: '3dmodel', label: 'Modelo 3D' }
+        ];
+      default:
+        return [];
+    }
+  };
+  
+  // Manipula o upload de arquivo
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      
+      // Cria uma URL para preview da imagem
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreview(event.target?.result as string || null);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+  
+  // Manipula o envio do formulário
+  const handleSubmit = () => {
+    if (!file || !title || !type) return;
+    
+    onUpload({
+      file,
+      type,
+      title,
+      description
+    });
+    
+    onClose();
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+        <div className="p-4 border-b">
+          <h3 className="text-lg font-semibold">Upload de Imagem</h3>
+          <p className="text-sm text-gray-500">
+            {category === 'photos' && 'Adicione uma nova fotografia ao prontuário'}
+            {category === 'radiographs' && 'Adicione uma nova radiografia ao prontuário'}
+            {category === 'scans' && 'Adicione um novo escaneamento ao prontuário'}
+            {category === 'models' && 'Adicione um novo modelo 3D ao prontuário'}
+          </p>
+        </div>
+        
+        <div className="p-4">
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Título</label>
+            <input 
+              type="text" 
+              className="w-full p-2 border rounded-md" 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Ex: Foto Frontal"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Tipo</label>
+            <select 
+              className="w-full p-2 border rounded-md"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="">Selecione um tipo</option>
+              {getTypeOptions().map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Descrição</label>
+            <textarea 
+              className="w-full p-2 border rounded-md" 
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Breve descrição da imagem"
+              rows={3}
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Imagem</label>
+            <div 
+              className="border-2 border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-gray-50"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {preview ? (
+                <div className="relative">
+                  <img src={preview} alt="Preview" className="max-h-48 mx-auto object-contain" />
+                  <button 
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFile(null);
+                      setPreview(null);
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <ArrowDownTrayIcon className="h-8 w-8 mx-auto text-gray-400" />
+                  <p className="text-sm text-gray-500 mt-2">Clique para selecionar uma imagem</p>
+                </>
+              )}
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                className="hidden" 
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-4 border-t flex justify-end space-x-2">
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={!file || !title || !type}
+          >
+            Upload
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId = 'default', isNewPatient = false }) => {
   const [timelineIndex, setTimelineIndex] = useState(0);
+  const [patientImages, setPatientImages] = useState<PatientImagesData>(mockImages);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState<string>('');
+
+  // Carrega as imagens do localStorage quando o componente é montado
+  useEffect(() => {
+    if (!isNewPatient && patientId) {
+      const loadedImages = loadImagesFromLocalStorage(patientId);
+      setPatientImages(loadedImages);
+    }
+  }, [patientId, isNewPatient]);
+
+  // Função para abrir o modal de upload
+  const openUploadModal = (category: string) => {
+    setCurrentCategory(category);
+    setUploadModalOpen(true);
+  };
+
+  // Função para lidar com o upload de uma nova imagem
+  const handleImageUpload = (data: { file: File, type: string, title: string, description: string }) => {
+    if (!patientId) return;
+    
+    // Cria uma cópia do estado atual
+    const updatedImages = { ...patientImages };
+    
+    // Converte o arquivo para base64 para armazenamento
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target?.result as string;
+      
+      // Cria um novo objeto de imagem
+      const newImage = {
+        id: `${currentCategory}-${Date.now()}`, // ID único baseado em timestamp
+        src: base64String,
+        type: data.type,
+        date: new Date().toLocaleDateString('pt-BR'),
+        title: data.title,
+        description: data.description
+      };
+      
+      // Adiciona à categoria apropriada
+      switch (currentCategory) {
+        case 'photos':
+          updatedImages.photos = [...updatedImages.photos, newImage];
+          break;
+        case 'radiographs':
+          updatedImages.radiographs = [...updatedImages.radiographs, newImage];
+          break;
+        case 'scans':
+          updatedImages.scans = [...updatedImages.scans, newImage];
+          break;
+        case 'models':
+          updatedImages.models = [...updatedImages.models, newImage];
+          break;
+      }
+      
+      // Atualiza o estado e salva no localStorage
+      setPatientImages(updatedImages);
+      saveImagesToLocalStorage(patientId, updatedImages);
+    };
+    
+    reader.readAsDataURL(data.file);
+  };
+
+  // Função para excluir uma imagem
+  const handleDeleteImage = (category: string, imageId: string) => {
+    if (!patientId) return;
+    
+    // Cria uma cópia do estado atual
+    const updatedImages = { ...patientImages };
+    
+    // Remove a imagem da categoria apropriada
+    switch (category) {
+      case 'photos':
+        updatedImages.photos = updatedImages.photos.filter(img => img.id !== imageId);
+        break;
+      case 'radiographs':
+        updatedImages.radiographs = updatedImages.radiographs.filter(img => img.id !== imageId);
+        break;
+      case 'scans':
+        updatedImages.scans = updatedImages.scans.filter(img => img.id !== imageId);
+        break;
+      case 'models':
+        updatedImages.models = updatedImages.models.filter(img => img.id !== imageId);
+        break;
+    }
+    
+    // Atualiza o estado e salva no localStorage
+    setPatientImages(updatedImages);
+    saveImagesToLocalStorage(patientId, updatedImages);
+  };
 
   if (isNewPatient) {
     return (
@@ -274,7 +651,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
 
   // Navegação da timeline
   const nextTimelineItem = () => {
-    if (timelineIndex < mockImages.timeline.length - 1) {
+    if (timelineIndex < patientImages.timeline.length - 1) {
       setTimelineIndex(timelineIndex + 1);
     }
   };
@@ -304,17 +681,22 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Fotografias Clínicas</h4>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => openUploadModal('photos')}
+              >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 <span>Adicionar Fotos</span>
               </Button>
             </div>
             
             <div>
-              <h5 className="text-sm font-medium mb-3">Extraorais</h5>
+              <h5 className="text-sm font-medium mb-3">Fotos Frontais</h5>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {mockImages.photos
-                  .filter(img => img.type === 'extraoral')
+                {patientImages.photos
+                  .filter(img => img.type === 'frontal')
                   .map(img => (
                     <ImageCard 
                       key={img.id}
@@ -322,6 +704,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
                       title={img.title}
                       date={img.date}
                       description={img.description}
+                      onDelete={() => handleDeleteImage('photos', img.id)}
                     />
                   ))
                 }
@@ -329,10 +712,10 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
             </div>
             
             <div className="mt-6">
-              <h5 className="text-sm font-medium mb-3">Intraorais</h5>
+              <h5 className="text-sm font-medium mb-3">Fotos Laterais</h5>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {mockImages.photos
-                  .filter(img => img.type === 'intraoral')
+                {patientImages.photos
+                  .filter(img => img.type === 'lateral')
                   .map(img => (
                     <ImageCard 
                       key={img.id}
@@ -340,6 +723,26 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
                       title={img.title}
                       date={img.date}
                       description={img.description}
+                      onDelete={() => handleDeleteImage('photos', img.id)}
+                    />
+                  ))
+                }
+              </div>
+            </div>
+            
+            <div className="mt-6">
+              <h5 className="text-sm font-medium mb-3">Fotos Diagonais</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {patientImages.photos
+                  .filter(img => img.type === 'diagonal')
+                  .map(img => (
+                    <ImageCard 
+                      key={img.id}
+                      src={img.src}
+                      title={img.title}
+                      date={img.date}
+                      description={img.description}
+                      onDelete={() => handleDeleteImage('photos', img.id)}
                     />
                   ))
                 }
@@ -353,7 +756,12 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Radiografias</h4>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => openUploadModal('radiographs')}
+              >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 <span>Adicionar Radiografia</span>
               </Button>
@@ -362,7 +770,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
             <div>
               <h5 className="text-sm font-medium mb-3">Panorâmicas</h5>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {mockImages.radiographs
+                {patientImages.radiographs
                   .filter(img => img.type === 'panoramic')
                   .map(img => (
                     <ImageCard 
@@ -371,6 +779,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
                       title={img.title}
                       date={img.date}
                       description={img.description}
+                      onDelete={() => handleDeleteImage('radiographs', img.id)}
                     />
                   ))
                 }
@@ -380,7 +789,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
             <div className="mt-6">
               <h5 className="text-sm font-medium mb-3">Periapicais</h5>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {mockImages.radiographs
+                {patientImages.radiographs
                   .filter(img => img.type === 'periapical')
                   .map(img => (
                     <ImageCard 
@@ -389,6 +798,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
                       title={img.title}
                       date={img.date}
                       description={img.description}
+                      onDelete={() => handleDeleteImage('radiographs', img.id)}
                     />
                   ))
                 }
@@ -402,20 +812,26 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Escaneamentos Intraorais</h4>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => openUploadModal('scans')}
+              >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 <span>Adicionar Escaneamento</span>
               </Button>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {mockImages.scans.map(img => (
+              {patientImages.scans.map(img => (
                 <ImageCard 
                   key={img.id}
                   src={img.src}
                   title={img.title}
                   date={img.date}
                   description={img.description}
+                  onDelete={() => handleDeleteImage('scans', img.id)}
                 />
               ))}
             </div>
@@ -427,20 +843,26 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Modelos Digitais 3D</h4>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => openUploadModal('models')}
+              >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 <span>Adicionar Modelo</span>
               </Button>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {mockImages.models.map(img => (
+              {patientImages.models.map(img => (
                 <ImageCard 
                   key={img.id}
                   src={img.src}
                   title={img.title}
                   date={img.date}
                   description={img.description}
+                  onDelete={() => handleDeleteImage('models', img.id)}
                 />
               ))}
             </div>
@@ -468,14 +890,14 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
                   <ChevronLeftIcon className="h-4 w-4" />
                 </Button>
                 <span className="text-sm">
-                  {timelineIndex + 1} / {mockImages.timeline.length}
+                  {timelineIndex + 1} / {patientImages.timeline.length}
                 </span>
                 <Button 
                   variant="outline" 
                   size="icon" 
                   className="h-8 w-8"
                   onClick={nextTimelineItem}
-                  disabled={timelineIndex === mockImages.timeline.length - 1}
+                  disabled={timelineIndex === patientImages.timeline.length - 1}
                 >
                   <ChevronRightIcon className="h-4 w-4" />
                 </Button>
@@ -483,13 +905,13 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
             </div>
             
             <div>
-              {mockImages.timeline[timelineIndex] && (
+              {patientImages.timeline[timelineIndex] && (
                 <BeforeAfterCompare
-                  title={mockImages.timeline[timelineIndex].title}
-                  date={mockImages.timeline[timelineIndex].date}
-                  description={mockImages.timeline[timelineIndex].description}
-                  before={mockImages.timeline[timelineIndex].imageBefore}
-                  after={mockImages.timeline[timelineIndex].imageAfter}
+                  title={patientImages.timeline[timelineIndex].title}
+                  date={patientImages.timeline[timelineIndex].date}
+                  description={patientImages.timeline[timelineIndex].description}
+                  before={patientImages.timeline[timelineIndex].imageBefore}
+                  after={patientImages.timeline[timelineIndex].imageAfter}
                 />
               )}
             </div>
@@ -497,7 +919,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
             <div className="relative pt-8">
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gray-200"></div>
               <div className="flex justify-between">
-                {mockImages.timeline.map((item, index) => (
+                {patientImages.timeline.map((item, index) => (
                   <div 
                     key={item.id} 
                     className={`relative flex flex-col items-center cursor-pointer`}
@@ -538,7 +960,7 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
             <Card>
               <CardContent className="p-0">
                 <div className="divide-y">
-                  {mockImages.documents.map(doc => (
+                  {patientImages.documents.map(doc => (
                     <DocumentItem
                       key={doc.id}
                       title={doc.title}
@@ -563,6 +985,14 @@ const PatientImagesGallery: FC<PatientImagesGalleryProps> = ({ patientId, isNewP
           </div>
         </TabsContent>
       </Tabs>
+      
+      {/* Modal de Upload */}
+      <UploadModal 
+        isOpen={uploadModalOpen} 
+        onClose={() => setUploadModalOpen(false)} 
+        onUpload={handleImageUpload} 
+        category={currentCategory}
+      />
     </div>
   );
 };
