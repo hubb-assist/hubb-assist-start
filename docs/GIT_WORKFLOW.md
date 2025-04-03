@@ -97,14 +97,19 @@ As seguintes branches já foram criadas:
 - `feature/module-financeiro` - Para o módulo Financeiro
 - `feature/module-agenda` - Para o módulo de Agenda
 
+### ✅ Configuração do Repositório Remoto
+
+O repositório remoto já está configurado corretamente:
+```bash
+# O repositório remoto já está configurado
+$ git remote -v
+origin  https://github.com/hubb-assist/hubb-assist-start (fetch)
+origin  https://github.com/hubb-assist/hubb-assist-start (push)
+```
+
 ### Próximos Passos
 
-1. Configurar um repositório remoto para permitir colaboração
-   ```bash
-   git remote add origin https://github.com/sua-org/hubb-assist.git
-   ```
-
-2. Fazer o push inicial de todas as branches
+1. Fazer o push das branches para o repositório remoto
    ```bash
    git push -u origin main
    git push -u origin feature/protecao-modulos
@@ -116,4 +121,4 @@ As seguintes branches já foram criadas:
    git push -u origin feature/module-agenda
    ```
 
-3. Criar as branches para novos módulos conforme necessário 
+2. Criar as branches para novos módulos conforme necessário 
